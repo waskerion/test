@@ -1,5 +1,6 @@
 <template>
   <div class="todoWrapper">
+    <input type="checkbox" name="check" style="width: 50px;" v-model="todo.completed">
   	<button class="removeTodo" @click="removeTodo">remove</button>{{todo.text}}
   </div>
 </template>
@@ -7,10 +8,15 @@
 <script>
 export default {
   name:'todo-item',
-  props:["todo"],
+  data(){
+    return{
+      checked:[]
+    }
+  },
+  props:["todo","index"],
   methods:{
   	removeTodo(){
-  		this.$emit('todo:remove',this.todo.id);
+  		this.$emit('todo:remove',this.index);
   	}
   }
 }

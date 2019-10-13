@@ -13,7 +13,8 @@
     <div class="todo-wrapper">
       <app-header></app-header>
       <todo-input @todo:add="addTodo"></todo-input> 
-      <todo-item v-for="todo in todos" :todo="todo" @todo:remove="removeTodo" :key='todo.id'></todo-item>
+      <todo-item v-for="(todo,index) in todos" :todo="todo" :index="index" @todo:remove="removeTodo" :key='todo.id'></todo-item>
+      <Footer :todos="todos" :selectAll="selectAll" :clearAllComplete="clearAllComplete"></Footer>
     </div>
   </div>
 </template>
@@ -23,26 +24,31 @@
 import AppHeader from './components/AppHeader.vue';
 import TodoInput from './components/TodoInput.vue';
 import TodoItem from './components/TodoItem.vue';
+import Footer from './components/Footer.vue'
+
 
 export default {
   name: 'App',
   components:{
     AppHeader,
     TodoInput,
-    TodoItem
+    TodoItem,
+    Footer
   },
   data(){
     return{
+
       items:[1,3,4,6,2],
         i:-1,
         msg:'',
         show:true,
         todos:[
-          {id:0,text:"eat"},
-          {id:1,text:"play"},
-          {id:2,text:"learn"}
+          {id:0,text:"eat",completed:false},
+          {id:1,text:"play",completed:false},
+          {id:2,text:"learn",completed:false}
         ],
-        nextId:3
+        nextId:3,
+        checkedAll:true
     };
   },
   methods:{
@@ -55,20 +61,33 @@ export default {
           })
         },
         addTodo(text){
-          this.todos.push({id:this.nextId,text:text});
+          if(text.trim().length === 0){
+            return
+          }
+          this.todos.push({id:this.nextId,text:text,completed:false});
           this.nextId++;
         },
-        removeTodo(id){
-          let todos = this.todos;
-          this.todos = todos.filter((todo) => todo.id != id)
+        // removeTodo(id){
+        //   let todos = this.todos;
+        //   this.todos = todos.filter((todo) => todo.id != id)
+          
+        // }
+        removeTodo(index){
+          this.todos.splice(index,1);
+        },
+        //全选/全不选
+        selectAll(check){
+          this.todos.forEach(todo => todo.completed=check)
+        },
+        clearAllComplete(){
+          this.todos = this.todos.filter(todo => !todo.completed)
         }
       },
       watch:{
         msg:function(newValue,oldValue){
           console.log(newValue)
         }
-      }
-  
+      },
 }
 </script>
 
